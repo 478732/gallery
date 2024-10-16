@@ -32,15 +32,13 @@ const images = [
 
 export default function Home() {
     const [isModalOpen, setIsModalOpen] = useState(false)
-    // -1 signifies that no image is selected
-    const [selectedImageIndex, setSelectedImageIndex] = useState(-1)
+    const [selectedImageIndex, setSelectedImageIndex] = useState(-1) // -1 signifies that no image is selected
 
-    // Preload images on component mount
     useEffect(() => {
         const preloadImages = () => {
-            images.forEach((src) => {
+            images.forEach((image) => {
                 const img = new Image()
-                img.src = src.src
+                img.src = image.src
             })
         }
         preloadImages()

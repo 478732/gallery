@@ -1,8 +1,22 @@
 'use client'
 // image gallery preload images
+import { HeaderOffset } from '@/components/Header/HeaderOffset'
+import { MyImage } from '@/components/MyImage'
+import { PageLayout } from '@/components/PageLayout'
+import { SectionContainer } from '@/components/SectionContainer'
+import { Section } from '@/components/Sections/Section'
+import { hasDuplicateId } from '@/functions/hasDuplicateId'
+import { range } from '@/lib/gallery/utils/range'
 import { Dialog, DialogPanel, Transition } from '@headlessui/react'
-import NextImage, { StaticImageData } from 'next/image'
-import { useEffect, useState } from 'react'
+import {
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    XMarkIcon,
+} from '@heroicons/react/24/outline'
+import { AnimatePresence, motion } from 'framer-motion'
+import Image, { StaticImageData } from 'next/image'
+import { useState } from 'react'
+import { useSwipeable } from 'react-swipeable'
 import img1 from '../public/images/img1.webp'
 import img2 from '../public/images/img2.webp'
 import img3 from '../public/images/img3.webp'
@@ -12,18 +26,8 @@ import img6 from '../public/images/img6.webp'
 import img7 from '../public/images/img7.webp'
 import img8 from '../public/images/img8.webp'
 import img9 from '../public/images/img9.webp'
-
-const range = (start: number, end: number) => {
-    const output = []
-    if (typeof end === 'undefined') {
-        end = start
-        start = 0
-    }
-    for (let i = start; i < end; i += 1) {
-        output.push(i)
-    }
-    return output
-}
+// @ts-expect-error error
+import useKeypress from 'react-use-keypress'
 
 export interface InterfaceItem {
     id: number
@@ -79,13 +83,14 @@ const images: InterfaceItem[] = [
         imageAlt: '',
     },
 ]
+hasDuplicateId(images)
 
 interface ModalProps {
-    images: InterfaceItem[]
+    images: any[]
     currentIndex: number
     isOpen: boolean
     onClose: () => void
-    changePhotoIndex: (index: number) => void; // Define the function type
+    changePhotoIndex: any
 }
 
 const Modal = ({
@@ -97,9 +102,23 @@ const Modal = ({
 }: ModalProps) => {
     const [loaded, setLoaded] = useState(false)
 
-    const filteredImages = images?.filter((img: InterfaceItem) =>
+    const filteredImages = images?.filter((img: any) =>
         range(currentIndex - 15, currentIndex + 15).includes(img.id)
     )
+
+    const handlers = useSwipeable({
+        onSwipedLeft: () => {
+            if (currentIndex < images?.length - 1) {
+                changePhotoIndex(currentIndex + 1)
+            }
+        },
+        onSwipedRight: () => {
+            if (currentIndex > 0) {
+                changePhotoIndex(currentIndex - 1)
+            }
+        },
+        trackMouse: true,
+    })
 
     const currentImage = images[currentIndex]
 
@@ -123,10 +142,12 @@ const Modal = ({
                     aria-hidden="true"
                 />
 
-                <div className="fixed inset-0 flex w-screen items-center justify-center">
+                <div
+                    className="fixed inset-0 flex w-screen items-center justify-center"
+                    {...handlers}>
                     <DialogPanel className="relative h-full w-full">
                         <div className="flex h-full w-full items-center justify-center">
-                            <NextImage
+                            <MyImage
                                 src={currentImage.imageSrc}
                                 className="h-auto max-h-screen w-full max-w-full object-contain"
                                 sizes="
@@ -155,7 +176,7 @@ const Modal = ({
                                                         currentIndex - 1
                                                     )
                                                 }>
-                                                Previous
+                                                <ChevronLeftIcon className="h-6 w-6" />
                                             </button>
                                         )}
                                         {currentIndex + 1 < images.length && (
@@ -170,7 +191,7 @@ const Modal = ({
                                                         currentIndex + 1
                                                     )
                                                 }>
-                                                Next
+                                                <ChevronRightIcon className="h-6 w-6" />
                                             </button>
                                         )}
                                     </div>
@@ -178,7 +199,7 @@ const Modal = ({
                                         <button
                                             onClick={() => onClose()}
                                             className="rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition-colors hover:bg-black/75 hover:text-white">
-                                            exit
+                                            <XMarkIcon className="h-5 w-5" />
                                         </button>
                                     </div>
                                 </>
@@ -186,17 +207,38 @@ const Modal = ({
 
                             {/* Bottom Nav bar */}
                             <div className="fixed inset-x-0 bottom-0 z-40 overflow-hidden bg-gradient-to-b from-black/0 to-black/60">
-                                <div
+                                <motion.div
+                                    initial={false}
                                     className="mx-auto mb-6 mt-6 flex aspect-[3/2] h-14">
-                                    <div>
+                                    <AnimatePresence initial={false}>
                                         {filteredImages.map(
                                             ({
                                                 id,
                                                 imageSrc,
                                                 imageAlt,
                                             }: InterfaceItem) => (
-                                                <div
+                                                <motion.button
                                                     key={id}
+                                                    initial={{
+                                                        width: '0%',
+                                                        x: `${Math.max(
+                                                            (currentIndex - 1) *
+                                                                -100,
+                                                            15 * -100
+                                                        )}%`,
+                                                    }}
+                                                    animate={{
+                                                        scale:
+                                                            id === currentIndex
+                                                                ? 1.25
+                                                                : 1,
+                                                        width: '100%',
+                                                        x: `${Math.max(
+                                                            currentIndex * -100,
+                                                            15 * -100
+                                                        )}%`,
+                                                    }}
+                                                    exit={{ width: '0%' }}
                                                     onClick={() =>
                                                         changePhotoIndex(id)
                                                     }
@@ -204,12 +246,16 @@ const Modal = ({
                                                         id === currentIndex
                                                             ? 'z-20 rounded-md shadow shadow-black/50'
                                                             : 'z-10'
-                                                    } ${id === 0 ? 'rounded-l-md' : ''} ${
+                                                    } ${
+                                                        id === 0
+                                                            ? 'rounded-l-md'
+                                                            : ''
+                                                    } ${
                                                         id === images.length - 1
                                                             ? 'rounded-r-md'
                                                             : ''
                                                     } relative inline-block w-full shrink-0 transform-gpu overflow-hidden focus:outline-none`}>
-                                                    <NextImage
+                                                    <Image
                                                         alt={imageAlt}
                                                         width={180}
                                                         height={120}
@@ -221,11 +267,11 @@ const Modal = ({
                                                         src={imageSrc}
                                                         sizes="210px"
                                                     />
-                                                </div>
+                                                </motion.button>
                                             )
                                         )}
-                                    </div>
-                                </div>
+                                    </AnimatePresence>
+                                </motion.div>
                             </div>
                         </div>
                     </DialogPanel>
@@ -244,48 +290,50 @@ export default function Page() {
         setIsOpen(true)
     }
 
-    // const next = () => {
-    //     if (selectedIndex < images.length - 1) {
-    //         setSelectedIndex(selectedIndex + 1)
-    //     }
-    // }
-
-    // const previous = () => {
-    //     if (selectedIndex > 0) {
-    //         setSelectedIndex(selectedIndex - 1)
-    //     }
-    // }
-
-    useEffect(() => {
-        const preloadImages = () => {
-            images.forEach((image) => {
-                const img = new Image()
-                img.src = image.imageSrc.src
-            })
+    const next = () => {
+        if (selectedIndex < images.length - 1) {
+            setSelectedIndex(selectedIndex + 1)
         }
-        preloadImages()
-    }, [])
+    }
+
+    const previous = () => {
+        if (selectedIndex > 0) {
+            setSelectedIndex(selectedIndex - 1)
+        }
+    }
+
+    useKeypress('ArrowRight', () => {
+        next()
+    })
+
+    useKeypress('ArrowLeft', () => {
+        previous()
+    })
 
     return (
+        <PageLayout>
             <div>
-                <section className="pt-section pb-section">
-                    <div className="w-full gap-x-4 space-y-4 sm:columns-2 lg:columns-3">
-                        {images.map((item) => (
-                            <NextImage
-                                key={item.id}
-                                src={item.imageSrc}
-                                alt={item.imageAlt}
-                                sizes="
-                                    (min-width: 1024px) 33vw,
-                                    (min-width: 640px) 50vw,
-                                    100vw
-                                "
-                                className="cursor-zoom-in rounded-2xl brightness-90 transition will-change-auto hover:brightness-110"
-                                onClick={() => openModal(item.id)} // Open modal with the clicked image ID
-                            />
-                        ))}
-                    </div>
-                </section>
+                <Section className="pt-section pb-section">
+                    <HeaderOffset />
+                    <SectionContainer>
+                        <div className="w-full gap-x-4 space-y-4 sm:columns-2 lg:columns-3">
+                            {images.map((item) => (
+                                <MyImage
+                                    key={item.id}
+                                    src={item.imageSrc}
+                                    alt={item.imageAlt}
+                                    sizes="
+                                        (min-width: 1024px) 33vw,
+                                        (min-width: 640px) 50vw,
+                                        100vw
+                                    "
+                                    className="cursor-zoom-in rounded-2xl brightness-90 transition will-change-auto hover:brightness-110"
+                                    onClick={() => openModal(item.id)} // Open modal with the clicked image ID
+                                />
+                            ))}
+                        </div>
+                    </SectionContainer>
+                </Section>
 
                 <Modal
                     images={images} // Pass images array
@@ -295,6 +343,6 @@ export default function Page() {
                     changePhotoIndex={setSelectedIndex}
                 />
             </div>
-        
+        </PageLayout>
     )
 }
