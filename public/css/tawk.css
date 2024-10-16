@@ -1,0 +1,182 @@
+/* Button icon */
+
+.card--chat .tawk-button::after,
+.tawk-form-footer .tawk-button::after {
+    content: url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' height='0.65em' viewBox='0 0 380 512'><path stroke-width='40' stroke='%230F172A' fill='currentColor' d='M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z'/></svg>");
+}
+
+
+/* Uncategorized */
+
+.tawk-max-container, 
+.tawk-overlay {
+    border: 0;
+    border-top: 5px double #38bdf8;
+    border-radius: 1rem !important;
+}
+
+.tawk-header,
+.tawk-toolbar,
+.card-container::before,
+.tawk-overlay-header {
+    background-color: #0369a1 !important;
+}
+
+.header-card .tawk-image {
+    width: 1.5rem;
+    margin-top: 1rem;
+}
+
+.header-card p {
+    font-size: 1.5rem;
+    color: #e0f2fe;
+}
+
+.card-container::before {    
+    border-bottom: 40px double #facc15;    
+    border-bottom-left-radius: 9999px;
+    border-bottom-right-radius: 9999px;
+}
+
+.card--chat {
+    border: 0 !important;
+    border-radius: 9999px;
+}
+
+.tawk-home-kb-card {
+    margin-top: 0.75rem;
+    border: 0 !important;
+    border-radius: 1rem;
+    box-shadow: 0 0 #0000;
+}
+
+.tawk-flex-first .tawk-home-kb-card {
+    margin-top: 0;
+}
+
+.card--chat .tawk-button {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #0f172a;
+    border-radius: 9999px;
+}
+
+.card--chat .tawk-button::after {
+    display: inline-flex;
+    margin-left: 0.4rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    color: #0f172a;
+    
+}
+  
+.tawk-button .tawk-icon-mobile-send {
+    display: none;
+}
+
+
+/* Conversation list */
+
+.tawk-home-list li {
+    padding: 1rem !important;
+}
+
+.tawk-home-list.tawk-home-list-hover > li:hover {
+    border-radius: 1rem;
+    background-color: #f8fafc;
+}
+
+.tawk-avatar {
+    border-radius: 9999px;   
+}
+
+.tawk-home-list-chat-content .tawk-text-green-1 {
+    font-size: 0.6875rem;
+    text-align: left;
+}
+
+.tawk-home-conversation-active-button  {
+    border-radius: 9999px;
+}
+
+
+/* Chat log */
+
+.tawk-agent-information {
+    margin-top: 1rem !important;
+}
+
+.tawk-chat-view .tawk-header {
+    border-bottom: 10px double #fff;
+    border-bottom-left-radius: 3.125rem;
+    border-bottom-right-radius: 3.125rem;
+}
+
+.tawk-chat-view .tawk-agent-chat-bubble.tawk-card, .tawk-chat-view .tawk-visitor-chat-bubble
+{
+    padding: 0.625rem 1rem !important;
+    border-radius: 1.25rem !important;
+}
+
+
+/* Form */
+
+.header-card.card--text .tawk-header-text {
+    font-size: 0.875rem !important;
+    font-weight: 300;
+    line-height: 1.25rem;
+    text-align: left;
+}
+
+#tawk-form-container .tawk-card {
+    border: 0;
+    border-left: 0 !important;
+    border-radius: 1rem;
+}
+
+.tawk-form-input fieldset p {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.tawk-input {
+    height: 2.3rem;    
+}
+
+.tawk-input, 
+.tawk-textarea {
+    border-radius: 0.6rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tawk-form-footer .tawk-button {
+    display: flex;
+    width: auto;
+    padding: .3rem 1rem;
+    align-items: baseline;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 9999px;    
+    color: #0f172a;
+}
+
+.tawk-form-footer .tawk-button.width-100 {
+    margin-left: auto;
+}
+
+.tawk-form-footer .tawk-button::after {
+    display: inline-flex;
+    margin-left: 0.5rem;
+    color: #0f172a;    
+}
+
+@-moz-document url-prefix() {
+    .tawk-form-footer .tawk-button::after {
+        margin-right: 0.35rem;
+    }
+}
+
+.tawk-form-footer .tawk-button .tawk-header-text {
+    color: #0f172a;
+}
